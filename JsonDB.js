@@ -18,6 +18,7 @@ class JsonDB {
    * @param separator what to use as separator
    */
   constructor(id, model, separator = '/') {
+    this.id = id;
     this.model = model;
     this.loaded = false;
     this.data = {};
