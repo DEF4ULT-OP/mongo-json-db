@@ -282,28 +282,24 @@ class JsonDB {
    * Manually load the database
    * It is automatically called when the first getData is done
    */
-  load(cb) {
-    if(!cb) cb = () => {};
-    const main = this;
-    const makeLoaded = this.makeLoaded.bind(this);
+  async load() {
+    let main = this;
     if (this.loaded) {
       return;
     }
     try {
-      this.model.findOne({
+      const data = await this.model.findOne({
           tourney_id: main.id
-        })
-        .exec((err, data) => {
-          if (err) throw new Error(err);
-          if (data) {
-            main.data = data;
-          } else {
-            main.data = new this.model({ tourney_id: main.id });
-          };
-          main.loaded = true;
-          makeLoaded();
-          cb(main);
         });
+      if (data) {
+          this.data = data;
+          this.loaded = true;
+          return;
+      };
+      this.data = new this.model({
+           tourney_id: main.id
+      });
+      this.loaded = true;
     }
     catch (err) {
       const error = new Errors_1.DatabaseError("Can't Load Database", 1, err);
@@ -311,9 +307,7 @@ class JsonDB {
     }
   }
 
-  makeLoaded() {
-    this.loaded = true;
-  };
+
   /**
    * Manually save the database
    * By default you can't save the database if it's not loaded
