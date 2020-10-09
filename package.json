@@ -1,6 +1,6 @@
 {
   "name": "mongo-json-db",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Database using JSON file as storage for Node.JS",
   "main": "JsonDB.js",
   "types": "JsonDB.d.ts",
