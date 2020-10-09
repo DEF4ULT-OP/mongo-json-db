@@ -294,12 +294,13 @@ class JsonDB {
       if (data) {
           this.data = data;
           this.loaded = true;
-          return;
+          return true;
       };
       this.data = new this.model({
            tourney_id: main.id
       });
       this.loaded = true;
+      return true;
     }
     catch (err) {
       const error = new Errors_1.DatabaseError("Can't Load Database", 1, err);
