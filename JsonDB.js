@@ -282,22 +282,22 @@ class JsonDB {
    * It is automatically called when the first getData is done
    */
   load() {
-    const id = this.id;
+    const main = this;
     if (this.loaded) {
       return;
     }
     try {
       this.model.findOne({
-          tourney_id: id
+          tourney_id: main.id
         })
         .exec((err, data) => {
           if (err) throw new Error(err);
           if (data) {
             this.data = data;
           } else {
-            this.data = new this.model({ tourney_id: id });
+            this.data = new this.model({ tourney_id: main.id });
           }
-          this.loaded = true;
+          main.loaded = true;
         });
     }
     catch (err) {
