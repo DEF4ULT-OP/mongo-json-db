@@ -21,12 +21,7 @@ class JsonDB {
     this.model = model;
     this.loaded = false;
     this.data = {};
-    if (filename instanceof JsonDBConfig_1.Config) {
-      this.config;
-    }
-    else {
-      this.config = new JsonDBConfig_1.Config('db.json', false, false, separator);
-    }
+    this.config = new JsonDBConfig_1.Config('db.json', false, false, separator);
     /**
     if (!FS.existsSync(this.config.filename)) {
         const dirname = path.dirname(this.config.filename);
