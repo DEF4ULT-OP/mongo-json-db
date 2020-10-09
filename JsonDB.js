@@ -23,6 +23,7 @@ class JsonDB {
     this.loaded = false;
     this.data = {};
     this.config = new JsonDBConfig_1.Config('db.json', false, false, separator);
+    this.load();
     /**
     if (!FS.existsSync(this.config.filename)) {
         const dirname = path.dirname(this.config.filename);
@@ -281,8 +282,10 @@ class JsonDB {
    * Manually load the database
    * It is automatically called when the first getData is done
    */
-  load() {
+  load(cb) {
+    if(!cb) cb = () => {};
     const main = this;
+    const makeLoaded = this.makeLoaded.bind(this);
     if (this.loaded) {
       return;
     }
@@ -293,11 +296,13 @@ class JsonDB {
         .exec((err, data) => {
           if (err) throw new Error(err);
           if (data) {
-            this.data = data;
+            main.data = data;
           } else {
-            this.data = new this.model({ tourney_id: main.id });
-          }
+            main.data = new this.model({ tourney_id: main.id });
+          };
           main.loaded = true;
+          makeLoaded();
+          cb(main);
         });
     }
     catch (err) {
@@ -305,6 +310,10 @@ class JsonDB {
       throw error;
     }
   }
+
+  makeLoaded() {
+    this.loaded = true;
+  };
   /**
    * Manually save the database
    * By default you can't save the database if it's not loaded
