@@ -23,7 +23,6 @@ class JsonDB {
     this.loaded = false;
     this.data = {};
     this.config = new JsonDBConfig_1.Config('db.json', false, false, separator);
-    this.load();
     /**
     if (!FS.existsSync(this.config.filename)) {
         const dirname = path.dirname(this.config.filename);
@@ -288,17 +287,20 @@ class JsonDB {
       return;
     }
     try {
-      const data = await this.model.findOne({
-          tourney_id: main.id
-        });
-      if (data) {
-          this.data = data;
-          this.loaded = true;
-          return true;
-      };
-      this.data = new this.model({
-           tourney_id: main.id
+      let data = await this.model.findOne({
+        tourney_id: main.id
       });
+      if (data) {
+        this.data = data.toJSON();
+        this.loaded = true;
+        return true;
+      };
+      data = new this.model({
+        tourney_id: main.id
+      });
+      data = data.toJSON();
+      data.new = true;
+      this.data = data;
       this.loaded = true;
       return true;
     }
@@ -330,9 +332,20 @@ class JsonDB {
   }
 
   mongoSave(cb) {
-    this.data.save(cb);
+    const data = this.data;
+    if (data.new) {
+      const doc = new this.model(data);
+      return doc.save(cb);
+    };
+
+    this.updateOne({
+        _id: data._id
+      }, data)
+      .exec(cb);
   }
-}
+
+};
+
 exports.JsonDB = JsonDB;
 // no
-//# sourceMappingURL=JsonDB.js.map
+//# sourceMappingURL=JsonDB.js.map;
